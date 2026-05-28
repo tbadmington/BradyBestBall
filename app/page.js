@@ -100,7 +100,8 @@ export default function GolfScorecard() {
     .map((g) => {
       const { total, holesPlayed } = groupTotal(g.id);
       const parPlayed = groupParForHolesPlayed(g.id);
-      return { ...g, total, holesPlayed, parPlayed, toPar: total - parPlayed };
+      // For team best ball, the team's "par" for each hole is 2x (two players' contributions)
+      return { ...g, total, holesPlayed, parPlayed, toPar: total - parPlayed * 2 };
     })
     .sort((a, b) => {
       if (a.holesPlayed === 0 && b.holesPlayed === 0) return a.id - b.id;
@@ -795,12 +796,13 @@ function GroupPicker({ groups, currentId, onPick, onCancel }) {
 
 function ScoreMarker({ value, diff, size = 'sm', inverted = false }) {
   const sizes = {
-    sm: { box: 22, font: 12, stroke: 1.3, inner: 17, outer: 22 },
-    md: { box: 24, font: 16, stroke: 1.6, inner: 19, outer: 24 },
-    btn: { box: 22, font: 13, stroke: 1.3, inner: 18, outer: 23 },
+    sm: { box: 22, font: 12, stroke: 0.9, inner: 18, outer: 22 },
+    md: { box: 24, font: 16, stroke: 1.1, inner: 20, outer: 24 },
+    btn: { box: 22, font: 13, stroke: 0.9, inner: 19, outer: 23 },
   };
   const s = sizes[size];
-  const stroke = inverted ? '#f5efe0' : '#1a3a2a';
+  // Softer green-gray instead of the hard near-black green; lighter on inverted backgrounds
+  const stroke = inverted ? 'rgba(245,239,224,0.75)' : 'rgba(26,58,42,0.55)';
   const text = inverted ? '#f5efe0' : '#1a3a2a';
   const showCircle = diff <= -1;
   const showDoubleCircle = diff <= -2;
